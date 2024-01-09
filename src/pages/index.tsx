@@ -1,12 +1,17 @@
-import { cn, cva } from '@/utils/style';
+import { cn } from '@/utils/style';
+import { createClient } from '@/utils/supabase/client';
 import { Inter } from 'next/font/google';
 import Image from 'next/image';
 
 const inter = Inter({ subsets: ['latin'] });
 
-const button = cva('flex');
+const supabase = createClient();
 
 export default function Home() {
+    // supabase
+    //     .from('Test')
+    //     .select('*')
+    //     .then((res) => res.data);
     return (
         <main
             className={cn(
