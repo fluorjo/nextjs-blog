@@ -9,7 +9,6 @@
     "lint": "next lint",
     "genTypes": "supabase gen types typescript --project-id vyfkwfwikstziyoxdiap > src/types/supabase.ts",
     "supabase:login": "npx supabase login"
-
   },
   "dependencies": {
     "@supabase/ssr": "^0.0.10",
@@ -18,6 +17,7 @@
     "next": "14.0.4",
     "react": "^18",
     "react-dom": "^18",
+    "react-icons": "^4.12.0",
     "tailwind-merge": "^2.2.0"
   },
   "devDependencies": {
