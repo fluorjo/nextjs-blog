@@ -9,6 +9,36 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      Post: {
+        Row: {
+          category: string | null
+          content: string
+          created_at: string
+          id: number
+          preview_image_url: string | null
+          tags: string | null
+          title: string
+        }
+        Insert: {
+          category?: string | null
+          content: string
+          created_at?: string
+          id?: number
+          preview_image_url?: string | null
+          tags?: string | null
+          title: string
+        }
+        Update: {
+          category?: string | null
+          content?: string
+          created_at?: string
+          id?: number
+          preview_image_url?: string | null
+          tags?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       Test: {
         Row: {
           created_at: string
