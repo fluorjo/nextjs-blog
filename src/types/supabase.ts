@@ -11,30 +11,30 @@ export interface Database {
     Tables: {
       Post: {
         Row: {
-          category: string | null
+          category: string
           content: string
           created_at: string
           id: number
           preview_image_url: string | null
-          tags: string | null
+          tags: string
           title: string
         }
         Insert: {
-          category?: string | null
+          category: string
           content: string
           created_at?: string
           id?: number
           preview_image_url?: string | null
-          tags?: string | null
+          tags: string
           title: string
         }
         Update: {
-          category?: string | null
+          category?: string
           content?: string
           created_at?: string
           id?: number
           preview_image_url?: string | null
-          tags?: string | null
+          tags?: string
           title?: string
         }
         Relationships: []
