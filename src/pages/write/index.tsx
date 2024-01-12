@@ -1,6 +1,8 @@
 import { MarkdownEditor } from '@/components/Markdown';
 import { createClient } from '@/utils/supabase/server';
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
+import { FormEvent, useRef, useState } from 'react';
 import ReactSelect from 'react-select/creatable';
 
 type WriteProps = {
@@ -11,10 +13,40 @@ export default function Write({
     existingTags,
     existingCategories,
 }: WriteProps) {
+    const router = useRouter();
+    const fileRef = useRef<HTMLInputElement>(null);
+    const [title, setTitle] = useState('');
+    const [categoty, setCategoty] = useState('');
+    const [tags, setTags] = useState('[]');
+    const [content, setContent] = useState('');
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+
+        formData.append('title', title);
+        formData.append('categoty', categoty);
+        formData.append('tags', tags);
+        formData.append('content', content);
+
+        if (fileRef.current?.files?.[0]) {
+            formData.append('preview_image', fileRef.current.files[0]);
+        }
+
+        const response = await fetch('/api/posts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            body: formData,
+        });
+        const data = await response.json();
+        if (data.id) router.push(`/posts/${data.id}`);
+    };
     return (
         <div className={'container mx-auto flex flex-col px-4 pb-20 pt-12'}>
             <h1 className={'mb-8 text-2xl font-medium'}>새 글</h1>
-            <form action="">
+            <form onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-3">
                     <input
                         type="text"
@@ -22,6 +54,8 @@ export default function Write({
                         className={
                             'rounded-md border border-gray-300 p-2 transition-all hover:border-gray-400'
                         }
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
                     />
                     <input
                         type="file"
@@ -29,6 +63,7 @@ export default function Write({
                         className={
                             'rounded-md border border-gray-300 p-2 transition-all hover:border-gray-400'
                         }
+                        ref={fileRef}
                     />
                     <ReactSelect
                         options={existingCategories.map((categoty) => ({
@@ -36,6 +71,7 @@ export default function Write({
                             value: categoty,
                         }))}
                         placeholder="카테고리"
+                        onChange={(e) => e && setCategoty(e.value)}
                         isMulti={false}
                     />
                     <ReactSelect
@@ -43,10 +79,17 @@ export default function Write({
                             label: tag,
                             value: tag,
                         }))}
+                        onChange={(e) =>
+                            e && setTags(JSON.stringify(e.map((e) => e.value)))
+                        }
                         placeholder="태그"
                         isMulti={true}
                     />
-                    <MarkdownEditor height={500} />
+                    <MarkdownEditor
+                        height={500}
+                        value={content}
+                        onChange={(s) => setContent(s ?? '')}
+                    />
                 </div>
                 <button
                     type="submit"
@@ -65,15 +108,16 @@ export const getServerSideProps: GetServerSideProps<WriteProps> = async ({
     req,
 }) => {
     const supabase = createClient(req.cookies);
-    const { data } = await supabase.from('Post').select('category,tags')
+    const { data } = await supabase.from('Post').select('category,tags');
 
     return {
         props: {
             existingCategories: Array.from(
-                new Set(data?.map((d) => d.category))
+                new Set(data?.map((d) => d.category)),
             ),
             existingTags: Array.from(
-                new Set(data?.flatMap((d) => JSON.parse(d.tags)))),
+                new Set(data?.flatMap((d) => JSON.parse(d.tags))),
+            ),
         },
     };
 };
