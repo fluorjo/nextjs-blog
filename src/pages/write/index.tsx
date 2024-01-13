@@ -16,7 +16,7 @@ export default function Write({
     const router = useRouter();
     const fileRef = useRef<HTMLInputElement>(null);
     const [title, setTitle] = useState('');
-    const [categoty, setCategoty] = useState('');
+    const [category, setCategory] = useState('');
     const [tags, setTags] = useState('[]');
     const [content, setContent] = useState('');
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -25,7 +25,7 @@ export default function Write({
         const formData = new FormData();
 
         formData.append('title', title);
-        formData.append('categoty', categoty);
+        formData.append('category', category);
         formData.append('tags', tags);
         formData.append('content', content);
 
@@ -66,12 +66,12 @@ export default function Write({
                         ref={fileRef}
                     />
                     <ReactSelect
-                        options={existingCategories.map((categoty) => ({
-                            label: categoty,
-                            value: categoty,
+                        options={existingCategories.map((category) => ({
+                            label: category,
+                            value: category,
                         }))}
                         placeholder="카테고리"
-                        onChange={(e) => e && setCategoty(e.value)}
+                        onChange={(e) => e && setCategory(e.value)}
                         isMulti={false}
                     />
                     <ReactSelect
@@ -83,7 +83,7 @@ export default function Write({
                             e && setTags(JSON.stringify(e.map((e) => e.value)))
                         }
                         placeholder="태그"
-                        isMulti={true}
+                        isMulti
                     />
                     <MarkdownEditor
                         height={500}

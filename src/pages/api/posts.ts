@@ -2,6 +2,7 @@
 import { Post, postRequest } from '@/types';
 import { createClient } from '@/utils/supabase/server';
 import type { StorageError } from '@supabase/storage-js';
+import { error } from 'console';
 import formidable from 'formidable';
 import { readFileSync } from 'fs';
 import type { NextApiRequest, NextApiResponse } from 'next';
@@ -16,7 +17,7 @@ export default async function handler(
     let preview_image_url: string | null = null;
 
     const supabase = await createClient(req.cookies);
-    
+
     if (files.preview_image?.length === 1) {
         const file = files.preview_image[0];
         const fileContent = await readFileSync(file.filepath);
@@ -53,7 +54,9 @@ export default async function handler(
             ...reset,
             tags: JSON.parse(tags) as string[],
         });
-    } else res.status(500).end();
+    } else {
+        res.status(500).end();}
+    // } else console.log(data)
 }
 
 export const config = {
