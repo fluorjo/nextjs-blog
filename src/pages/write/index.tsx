@@ -35,9 +35,9 @@ export default function Write({
 
         const response = await fetch('/api/posts', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
+            // headers: {
+            //     'Content-Type': 'multipart/form-data',
+            // },
             body: formData,
         });
         const data = await response.json();
