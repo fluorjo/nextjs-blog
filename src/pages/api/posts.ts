@@ -2,7 +2,6 @@
 import { Post, postRequest } from '@/types';
 import { createClient } from '@/utils/supabase/server';
 import type { StorageError } from '@supabase/storage-js';
-import { error } from 'console';
 import formidable from 'formidable';
 import { readFileSync } from 'fs';
 import type { NextApiRequest, NextApiResponse } from 'next';
@@ -11,6 +10,8 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<Post | StorageError>,
 ) {
+    if (req.method !== 'POST') return res.status(405).end();
+    
     const form = formidable();
     const [fields, files] = await form.parse(req);
 
@@ -55,7 +56,8 @@ export default async function handler(
             tags: JSON.parse(tags) as string[],
         });
     } else {
-        res.status(500).end();}
+        res.status(500).end();
+    }
     // } else console.log(data)
 }
 

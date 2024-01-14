@@ -1,10 +1,10 @@
 import { MarkdownViewer } from '@/components/Markdown';
 import { Post } from '@/types';
 import { createClient } from '@/utils/supabase/server';
+import { format } from 'date-fns';
 import { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import {format} from 'date-fns'
 
 type PostProps = Post;
 
@@ -18,8 +18,8 @@ export default function Post({
     preview_image_url,
 }: PostProps) {
     return (
-        <div className="container mx-auto flex flex-col px-4 pb-40 pt-20">
-            <h1 className={'mb-8 text-4xl font-bold'}>{title}</h1>
+        <div className="container mx-auto flex flex-col gap-8 px-4 pb-40 pt-20">
+            <h1 className={'text-4xl font-bold'}>{title}</h1>
             <div className="flex flex-row items-center gap-2">
                 <Link
                     href={`/categories/${category}`}
@@ -52,10 +52,10 @@ export default function Post({
                     width={0}
                     height={0}
                     sizes="100vw"
-                    className={'mt-8 h-auto w-full'}
+                    className={'h-auto w-full'}
                 />
             )}
-            <MarkdownViewer source={content} className={'mt-8 min-w-full'} />
+            <MarkdownViewer source={content} className={' min-w-full'} />
         </div>
     );
 }
