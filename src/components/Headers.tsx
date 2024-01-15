@@ -18,7 +18,7 @@ const Header: FC<HeaderProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
 
             <Link href={'/'}>
                 <h1 className="text-3xl font-medium text-slate-600 lg:text-4xl">
-                    BLOG
+                    Fluorjo
                 </h1>
             </Link>
 
