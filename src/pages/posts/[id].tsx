@@ -1,3 +1,4 @@
+import IconButton from '@/components/IconButton';
 import { MarkdownViewer } from '@/components/Markdown';
 import { Post } from '@/types';
 import { createClient } from '@/utils/supabase/server';
@@ -5,6 +6,8 @@ import { format } from 'date-fns';
 import { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+import { MdOutlineModeEdit } from 'react-icons/md';
+import { MdOutlineDeleteForever} from 'react-icons/md';
 
 type PostProps = Post;
 
@@ -20,29 +23,45 @@ export default function Post({
     return (
         <div className="container flex flex-col gap-8 pb-40 pt-20">
             <h1 className={'text-4xl font-bold'}>{title}</h1>
-            <div className="flex flex-row items-center gap-2">
-                <Link
-                    href={`/categories/${category}`}
-                    className={
-                        'rounded-md bg-slate-800 px-2 py-1 text-sm text-white'
-                    }
-                >
-                    {category}
-                </Link>
-
-                {tags.map((tag) => (
+            <div className={' flex justify-between'}>
+                <div className="flex flex-row items-center gap-2 ">
                     <Link
-                        href={`/tags/${tag}`}
+                        href={`/categories/${category}`}
                         className={
-                            'rounded-md bg-slate-200 px-2 py-1 text-sm text-slate-500'
+                            'rounded-md bg-slate-800 px-2 py-1 text-sm text-white'
                         }
-                        key={tag}
                     >
-                        {tag}
+                        {category}
                     </Link>
-                ))}
-                <div className="text-sm text-gray-500">
-                    {format(new Date(created_at), 'yyyy년 M월 d일 HH:mm')}
+
+                    {tags.map((tag) => (
+                        <Link
+                            href={`/tags/${tag}`}
+                            className={
+                                'rounded-md bg-slate-200 px-2 py-1 text-sm text-slate-500'
+                            }
+                            key={tag}
+                        >
+                            {tag}
+                        </Link>
+                    ))}
+                    <div className="text-sm text-gray-500">
+                        {format(new Date(created_at), 'yyyy년 M월 d일 HH:mm')}
+                    </div>
+                </div>
+                <div className="flex">
+                    <IconButton
+                        Icon={MdOutlineModeEdit}
+                        component={Link}
+                        href="/write"
+                        className={'text-gray-500 hover:text-gray-600'}
+                    />
+                    <IconButton
+                        Icon={MdOutlineDeleteForever}
+                        component={Link}
+                        href="/write"
+                        className={'text-gray-500 hover:text-gray-600'}
+                    />
                 </div>
             </div>
             {preview_image_url && (
