@@ -54,7 +54,7 @@ export default function Post({
                         Icon={MdOutlineModeEdit}
                         component={Link}
                         href="/write"
-                        className={'text-gray-500 hover:text-gray-600'}
+                        className={`text-gray-500 hover:text-gray-600 `}
                     />
                     <IconButton
                         Icon={MdOutlineDeleteForever}
