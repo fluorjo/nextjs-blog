@@ -45,9 +45,8 @@ export default function Admin() {
                     <Button
                         type="button"
                         onClick={() => {
-                            // supabase.auth.signOut();
-                            // router.push('/');
-                            console.log('qqqqq')
+                            supabase.auth.signOut();
+                            router.push('/');
                         }}
                     >
                         Logout

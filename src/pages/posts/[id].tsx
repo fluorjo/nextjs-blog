@@ -78,7 +78,7 @@ export default function Post({
                         />
                     </div>
                 ) : (
-                    <div>no login</div>
+                    <div></div>
                 )}
             </div>
             {preview_image_url && (
