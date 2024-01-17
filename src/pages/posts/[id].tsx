@@ -1,13 +1,17 @@
 import IconButton from '@/components/IconButton';
 import { MarkdownViewer } from '@/components/Markdown';
 import { Post } from '@/types';
+import { createClient as createUserClient } from '@/utils/supabase/client';
 import { createClient } from '@/utils/supabase/server';
+import { UserResponse } from '@supabase/supabase-js';
 import { format } from 'date-fns';
 import { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { MdOutlineModeEdit } from 'react-icons/md';
-import { MdOutlineDeleteForever} from 'react-icons/md';
+import { useEffect, useState } from 'react';
+import { MdOutlineDeleteForever, MdOutlineModeEdit } from 'react-icons/md';
+
+const userSupabase = createUserClient();
 
 type PostProps = Post;
 
@@ -20,6 +24,15 @@ export default function Post({
     created_at,
     preview_image_url,
 }: PostProps) {
+    const [userResponse, setUserResponse] = useState<UserResponse>();
+
+    useEffect(() => {
+        (async () => {
+            const user = await userSupabase.auth.getUser();
+            setUserResponse(user);
+        })();
+    }, []);
+
     return (
         <div className="container flex flex-col gap-8 pb-40 pt-20">
             <h1 className={'text-4xl font-bold'}>{title}</h1>
@@ -49,20 +62,24 @@ export default function Post({
                         {format(new Date(created_at), 'yyyy년 M월 d일 HH:mm')}
                     </div>
                 </div>
-                <div className="flex">
-                    <IconButton
-                        Icon={MdOutlineModeEdit}
-                        component={Link}
-                        href="/write"
-                        className={`text-gray-500 hover:text-gray-600 `}
-                    />
-                    <IconButton
-                        Icon={MdOutlineDeleteForever}
-                        component={Link}
-                        href="/write"
-                        className={'text-gray-500 hover:text-gray-600'}
-                    />
-                </div>
+                {!!userResponse?.data.user ? (
+                    <div className="flex">
+                        <IconButton
+                            Icon={MdOutlineModeEdit}
+                            component={Link}
+                            href="/write"
+                            className={`text-gray-500 hover:text-gray-600 `}
+                        />
+                        <IconButton
+                            Icon={MdOutlineDeleteForever}
+                            component={Link}
+                            href="/write"
+                            className={'text-gray-500 hover:text-gray-600'}
+                        />
+                    </div>
+                ) : (
+                    <div>no login</div>
+                )}
             </div>
             {preview_image_url && (
                 <Image

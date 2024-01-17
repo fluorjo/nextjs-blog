@@ -39,17 +39,18 @@ export default function Admin() {
                         <b>{userResponse.data.user.email}</b> 로그인 성공
                     </div>
                     <Button type="button" onClick={() => router.push('/write')}>
-                        글 쓰러 가기{' '}
+                        글 쓰러 가기
                     </Button>
 
                     <Button
-                        type="submit"
+                        type="button"
                         onClick={() => {
-                            supabase.auth.signOut();
-                            router.push('/');
+                            // supabase.auth.signOut();
+                            // router.push('/');
+                            console.log('qqqqq')
                         }}
                     >
-                        Logout{' '}
+                        Logout
                     </Button>
                 </div>
             ) : (
