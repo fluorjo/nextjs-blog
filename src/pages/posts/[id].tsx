@@ -8,6 +8,7 @@ import { format } from 'date-fns';
 import { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { MdOutlineDeleteForever, MdOutlineModeEdit } from 'react-icons/md';
 
@@ -32,6 +33,18 @@ export default function Post({
             setUserResponse(user);
         })();
     }, []);
+    const router = useRouter();
+
+    const deletePost = async () => {
+        try {
+            await userSupabase.from('Post').delete().match({'id':id});
+            alert('ok');
+            // alert(id)
+        } catch (error) {
+            alert('error');
+        }
+        router.push('/');
+    };
 
     return (
         <div className="container flex flex-col gap-8 pb-40 pt-20">
@@ -72,8 +85,7 @@ export default function Post({
                         />
                         <IconButton
                             Icon={MdOutlineDeleteForever}
-                            component={Link}
-                            href="/write"
+                            onClick={deletePost}
                             className={'text-gray-500 hover:text-gray-600'}
                         />
                     </div>
