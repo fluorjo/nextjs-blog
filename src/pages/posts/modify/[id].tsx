@@ -1,14 +1,27 @@
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import { MarkdownEditor } from '@/components/Markdown';
+import { Post } from '@/types';
 import { useCategories, useTags } from '@/utils/hooks';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/server';
+import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { FormEvent, useRef, useState } from 'react';
 import ReactSelect from 'react-select/creatable';
 
-const supabase = createClient();
-export default function ModifyPost() {
+
+type PostProps = Post;
+
+
+export default function ModifyPost({
+    id,
+    title,
+    category,
+    tags,
+    content,
+    created_at,
+    preview_image_url,
+}: PostProps) {
     const router = useRouter();
     const titleRef = useRef<HTMLInputElement>(null);
     const fileRef = useRef<HTMLInputElement>(null);
@@ -16,9 +29,10 @@ export default function ModifyPost() {
     const { data: existingCategories } = useCategories();
     const { data: existingTags } = useTags();
     
-    const [category, setCategory] = useState('');
-    const [tags, setTags] = useState('[]');
-    const [content, setContent] = useState('');
+    const [newCategory, setCategory] = useState('');
+    const [newTags, setTags] = useState('[]');
+    const [newContent, setContent] = useState('');
+    
     const handleSubmit = async (e: FormEvent<HTMLFormElement>
         
         ) => {
@@ -32,9 +46,9 @@ export default function ModifyPost() {
         const formData = new FormData();
 
         formData.append('title', titleRef.current?.value ?? '');
-        formData.append('category', category);
-        formData.append('tags', tags);
-        formData.append('content', content);
+        formData.append('category', newCategory);
+        formData.append('tags', newTags);
+        formData.append('content', newContent);
 
         if (fileRef.current?.files?.[0]) {
             formData.append('preview_image', fileRef.current.files[0]);
@@ -52,10 +66,12 @@ export default function ModifyPost() {
     };
     return (
         <div className={'container flex flex-col pb-20 pt-12'}>
-            <h1 className={'mb-8 text-2xl font-medium'}>새 글</h1>
+            <h1 className={'mb-8 text-2xl font-medium'}>글 수정</h1>
             <form onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-3">
-                    <Input type="text" placeholder="제목" ref={titleRef} />
+                    <Input type="text" 
+                    // value={title} 
+                    ref={titleRef} />
                     <Input type="file" accept="image/*" ref={fileRef} />
                     <ReactSelect
                         options={(existingCategories ?? []).map((category) => ({
@@ -90,3 +106,35 @@ export default function ModifyPost() {
         </div>
     );
 }
+
+export const getServerSideProps: GetServerSideProps = async ({
+    query,
+    req,
+}) => {
+    const { id } = query;
+
+    const supabase = createClient(req.cookies);
+
+    const { data } = await supabase
+        .from('Post')
+        .select('*')
+        .eq('id', Number(id));
+
+    console.log(data);
+    if (!data || !data[0]) {
+        return { notFound: true };
+    }
+    const { title, category, tags, content, created_at, preview_image_url } =
+        data[0];
+    return {
+        props: {
+            id,
+            title,
+            category,
+            tags: JSON.parse(tags) as string[],
+            content,
+            created_at,
+            preview_image_url,
+        },
+    };
+};
