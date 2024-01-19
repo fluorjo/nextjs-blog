@@ -9,16 +9,14 @@ import { useRouter } from 'next/router';
 import { FormEvent, useRef, useState } from 'react';
 import ReactSelect from 'react-select/creatable';
 
-
 type PostProps = Post;
-
 
 export default function ModifyPost({
     id,
     title,
-    category,
-    tags,
-    content,
+    category: initialCategory,
+    tags: initialTags,
+    content: initialContent,
     created_at,
     preview_image_url,
 }: PostProps) {
@@ -28,14 +26,12 @@ export default function ModifyPost({
 
     const { data: existingCategories } = useCategories();
     const { data: existingTags } = useTags();
-    
-    const [newCategory, setCategory] = useState('');
-    const [newTags, setTags] = useState('[]');
-    const [newContent, setContent] = useState('');
-    
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>
-        
-        ) => {
+
+    const [category, setCategory] = useState(initialCategory);
+    const [tags, setTags] = useState(initialTags);
+    const [content, setContent] = useState(initialContent);
+
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!titleRef.current?.value || titleRef.current.value.length === 0)
             return alert('제목 입력 필요');
@@ -46,9 +42,9 @@ export default function ModifyPost({
         const formData = new FormData();
 
         formData.append('title', titleRef.current?.value ?? '');
-        formData.append('category', newCategory);
-        formData.append('tags', newTags);
-        formData.append('content', newContent);
+        formData.append('category', category);
+        formData.append('tags', tags.join(','));
+        formData.append('content', content);
 
         if (fileRef.current?.files?.[0]) {
             formData.append('preview_image', fileRef.current.files[0]);
@@ -69,9 +65,7 @@ export default function ModifyPost({
             <h1 className={'mb-8 text-2xl font-medium'}>글 수정</h1>
             <form onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-3">
-                    <Input type="text" 
-                    // value={title} 
-                    ref={titleRef} />
+                    <Input type="text" value={title} ref={titleRef} />
                     <Input type="file" accept="image/*" ref={fileRef} />
                     <ReactSelect
                         options={(existingCategories ?? []).map((category) => ({
@@ -79,6 +73,12 @@ export default function ModifyPost({
                             value: category,
                         }))}
                         placeholder="카테고리"
+                        // value={category}
+                        value={
+                            category
+                                ? { label: category, value: category }
+                                : null
+                        }
                         onChange={(e) => e && setCategory(e.value)}
                         isMulti={false}
                     />
@@ -87,9 +87,11 @@ export default function ModifyPost({
                             label: tag,
                             value: tag,
                         }))}
-                        onChange={(e) =>
-                            e && setTags(JSON.stringify(e.map((e) => e.value)))
-                        }
+                        onChange={(e) => e && setTags(e.map((e) => e.value))}
+                        defaultValue={(tags ?? []).map((tag) => ({
+                            label: tag,
+                            value: tag,
+                        }))}
                         placeholder="태그"
                         isMulti
                     />
