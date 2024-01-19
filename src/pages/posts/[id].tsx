@@ -37,7 +37,7 @@ export default function Post({
 
     const deletePost = async () => {
         try {
-            await userSupabase.from('Post').delete().match({'id':id});
+            await userSupabase.from('Post').delete().match({ id: id });
             alert('ok');
             // alert(id)
         } catch (error) {
@@ -80,7 +80,7 @@ export default function Post({
                         <IconButton
                             Icon={MdOutlineModeEdit}
                             component={Link}
-                            href="/write"
+                            href={`/posts/modify?id=${id}`}
                             className={`text-gray-500 hover:text-gray-600 `}
                         />
                         <IconButton
