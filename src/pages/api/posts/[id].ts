@@ -1,4 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { Post, postRequest } from '@/types';
 import { createClient } from '@/utils/supabase/server';
 import type { StorageError } from '@supabase/storage-js';
@@ -10,15 +9,33 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<Post | StorageError>,
 ) {
-    if (req.method !== 'POST') return res.status(405).end();
-    
+    const {
+        query: { id },
+        method,
+        body,
+    } = req;
+
+    if (req.method !== 'PUT') return res.status(405).end();
+
     const form = formidable();
     const [fields, files] = await form.parse(req);
 
     let preview_image_url: string | null = null;
 
-    const supabase = await createClient(req.cookies);   
-    
+    const supabase = await createClient(req.cookies);
+
+    // 기존 데이터 확인
+    const postId = req.query.id; // Assuming your route is /api/posts/[id]
+    const { data: existingData } = await supabase
+        .from('Post')
+        .select('*')
+        .eq('id', Number(postId));
+
+    console.log(postId);
+    if (!existingData || existingData.length !== 1) {
+        return res.status(404).end(); // 기존 데이터가 없으면 404 에러 반환
+    }
+
     if (files.preview_image?.length === 1) {
         const file = files.preview_image[0];
         const fileContent = await readFileSync(file.filepath);
@@ -39,15 +56,15 @@ export default async function handler(
         }
     }
     const { title, category, tags, content } = fields;
-    const postRequest = {
-        title: title?.[0],
-        category: category?.[0],
-        tags: tags?.[0],
-        content: content?.[0],
-        preview_image_url,
+    const updatedPostData = {
+        title: title?.[0] || existingData[0].title,
+        category: category?.[0] || existingData[0].category,
+        tags: tags?.[0] || existingData[0].tags,
+        content: content?.[0] || existingData[0].content,
+        preview_image_url: preview_image_url || existingData[0].preview_image_url,
     } as postRequest;
 
-    const { data } = await supabase.from('Post').insert([postRequest]).select();
+    const { data } = await supabase.from('Post').update(updatedPostData).eq('id', Number(postId)).select();
 
     if (data && data.length === 1) {
         const { tags, ...reset } = data[0];
@@ -58,9 +75,7 @@ export default async function handler(
     } else {
         res.status(500).end();
     }
-    // } else console.log(data)
 }
-
 export const config = {
     api: {
         bodyParser: false,
