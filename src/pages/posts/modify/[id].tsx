@@ -31,7 +31,7 @@ export default function ModifyPost({
     const [tags, setTags] = useState(initialTags);
     const [content, setContent] = useState(initialContent);
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    const handleUpdate = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!titleRef.current?.value || titleRef.current.value.length === 0)
             return alert('제목 입력 필요');
@@ -43,15 +43,15 @@ export default function ModifyPost({
 
         formData.append('title', titleRef.current?.value ?? '');
         formData.append('category', category);
-        formData.append('tags', tags.join(','));
+        // formData.append('tags', tags.join(','));
         formData.append('content', content);
 
         if (fileRef.current?.files?.[0]) {
             formData.append('preview_image', fileRef.current.files[0]);
         }
 
-        const response = await fetch('/api/posts', {
-            method: 'POST',
+        const response = await fetch(`/api/posts/${id}`, {
+            method: 'PUT',
             // headers: {
             //     'Content-Type': 'multipart/form-data',
             // },
@@ -63,7 +63,7 @@ export default function ModifyPost({
     return (
         <div className={'container flex flex-col pb-20 pt-12'}>
             <h1 className={'mb-8 text-2xl font-medium'}>글 수정</h1>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleUpdate}>
                 <div className="flex flex-col gap-3">
                     <Input type="text" value={title} ref={titleRef} />
                     <Input type="file" accept="image/*" ref={fileRef} />
@@ -102,7 +102,7 @@ export default function ModifyPost({
                     />
                 </div>
                 <Button type="submit" className={'mt-4 w-full'}>
-                    작성하기
+                    수정하기
                 </Button>
             </form>
         </div>

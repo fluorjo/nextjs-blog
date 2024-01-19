@@ -80,7 +80,7 @@ export default function Post({
                         <IconButton
                             Icon={MdOutlineModeEdit}
                             component={Link}
-                            href={`/posts/modify?id=${id}`}
+                            href={`/posts/modify/${id}`}
                             className={`text-gray-500 hover:text-gray-600 `}
                         />
                         <IconButton
