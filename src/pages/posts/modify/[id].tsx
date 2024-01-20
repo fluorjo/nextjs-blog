@@ -28,7 +28,7 @@ export default function ModifyPost({
     const { data: existingTags } = useTags();
 
     const [category, setCategory] = useState(initialCategory);
-    const [tags, setTags] = useState(initialTags);
+    const [tags, setTags] = useState(JSON.stringify(initialTags));
     const [content, setContent] = useState(initialContent);
 
     const handleUpdate = async (e: FormEvent<HTMLFormElement>) => {
@@ -43,7 +43,8 @@ export default function ModifyPost({
 
         formData.append('title', titleRef.current?.value ?? '');
         formData.append('category', category);
-        // formData.append('tags', tags.join(','));
+        formData.append('tags', tags);
+
         formData.append('content', content);
 
         if (fileRef.current?.files?.[0]) {
@@ -73,7 +74,6 @@ export default function ModifyPost({
                             value: category,
                         }))}
                         placeholder="카테고리"
-                        // value={category}
                         value={
                             category
                                 ? { label: category, value: category }
@@ -87,11 +87,15 @@ export default function ModifyPost({
                             label: tag,
                             value: tag,
                         }))}
-                        onChange={(e) => e && setTags(e.map((e) => e.value))}
-                        defaultValue={(tags ?? []).map((tag) => ({
-                            label: tag,
-                            value: tag,
-                        }))}
+                        onChange={(e) =>
+                            e && setTags(JSON.stringify(e.map((e) => e.value)))
+                        }
+                        defaultValue={(JSON.parse(tags) as string[]).flatMap(
+                            (tag) => ({
+                                label: tag,
+                                value: tag,
+                            }),
+                        )}
                         placeholder="태그"
                         isMulti
                     />

@@ -24,8 +24,7 @@ export default async function handler(
 
     const supabase = await createClient(req.cookies);
 
-    // 기존 데이터 확인
-    const postId = req.query.id; // Assuming your route is /api/posts/[id]
+    const postId = req.query.id; 
     const { data: existingData } = await supabase
         .from('Post')
         .select('*')
@@ -33,7 +32,7 @@ export default async function handler(
 
     console.log(postId);
     if (!existingData || existingData.length !== 1) {
-        return res.status(404).end(); // 기존 데이터가 없으면 404 에러 반환
+        return res.status(404).end(); 
     }
 
     if (files.preview_image?.length === 1) {
