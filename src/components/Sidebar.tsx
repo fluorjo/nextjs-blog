@@ -1,7 +1,7 @@
 import { useCategories } from '@/utils/hooks';
 import { cn } from '@/utils/style';
-import { createClient } from '@/utils/supabase/client';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { FC } from 'react';
 import { AiFillGithub, AiOutlineClose } from 'react-icons/ai';
 import IconButton from './IconButton';
@@ -13,7 +13,7 @@ type SidebarProps = {
 
 const Sidebar: FC<SidebarProps> = ({ close, isOpen }) => {
     const { data: existingCategories } = useCategories();
-
+    const router = useRouter();
     return (
         <div
             className={cn(
@@ -37,13 +37,17 @@ const Sidebar: FC<SidebarProps> = ({ close, isOpen }) => {
                 TAG
             </Link>
             {existingCategories?.map((category) => (
-                <Link
+                <a
                     key={category}
-                    href={`/category/${category}`}
+                    onClick={() => {
+                        router.push(`/categories/${category}`).then(() => {
+                            router.reload();
+                        });
+                    }}
                     className="w-48 font-medium text-gray-600 hover:underline"
                 >
                     {category}
-                </Link>
+                </a>
             ))}
             <div className="mt-10 flex items-center gap-4">
                 <IconButton
