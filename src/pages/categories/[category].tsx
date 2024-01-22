@@ -1,7 +1,15 @@
 import PostCard from '@/components/PostCard';
 import { GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
-
+type PostType={
+    category: string
+    content: string
+    created_at: string
+    id: number
+    preview_image_url: string | null
+    tags: string
+    title: string
+}
 type CategoryPostsProps = {
     category: string;
 };
@@ -29,7 +37,7 @@ export default function CategoryPosts({ category }: CategoryPostsProps) {
         <div className="flex flex-col items-center gap-8 pt-20">
             <h1 className="text-2xl font-medium">[{category}]</h1>
             <div className="container mx-auto grid grid-cols-2 gap-x-4 gap-y-6 px-4 pb-24 lg:gap-x-7 lg:gap-y-12">
-            {data.map((post) => (
+            {data.map((post: PostType) => (
               <PostCard key={post.id} {...post} />
                 ))}
             </div>
