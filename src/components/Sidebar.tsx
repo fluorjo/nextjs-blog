@@ -37,17 +37,13 @@ const Sidebar: FC<SidebarProps> = ({ close, isOpen }) => {
                 TAG
             </Link>
             {existingCategories?.map((category) => (
-                <a
+                <Link
                     key={category}
-                    onClick={() => {
-                        router.push(`/categories/${category}`).then(() => {
-                            router.reload();
-                        });
-                    }}
+                    href={`/categories/${category}`}
                     className="w-48 font-medium text-gray-600 hover:underline"
                 >
                     {category}
-                </a>
+                </Link>
             ))}
             <div className="mt-10 flex items-center gap-4">
                 <IconButton
