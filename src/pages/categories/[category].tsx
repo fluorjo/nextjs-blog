@@ -1,10 +1,7 @@
 import PostList from '@/components/PostList';
-import {
-    GetServerSideProps,
-    GetStaticPaths,
-    GetStaticProps,
-    InferGetStaticPropsType,
-} from 'next';
+import { Post } from '@/types';
+import { createClient } from '@/utils/supabase/server';
+import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 
 type PostType = {
     category: string;
@@ -17,19 +14,34 @@ type PostType = {
 };
 type CategoryPostsProps = {
     category: string;
+    posts: Post[];
 };
+const supabase = createClient({});
 
 export const getStaticPaths = (async () => {
+    const { data } = await supabase.from('Post').select('category');
+    const categories = Array.from(new Set(data?.map((d) => d.category)));
+
     return {
-        paths: [],
+        paths: categories.map((category) => ({ params: { category } })),
         fallback: 'blocking',
     };
 }) satisfies GetStaticPaths;
 
 export const getStaticProps = (async (context) => {
+    const category = context.params?.category as string;
+    const { data } = await supabase
+        .from('Post')
+        .select('*')
+        .eq('category', category);
     return {
         props: {
-            category: context.params?.category as string,
+            category,
+            posts:
+                data?.map((post) => ({
+                    ...post,
+                    tags: JSON.parse(post.tags) as string[],
+                })) ?? [],
         },
     };
 }) satisfies GetStaticProps<CategoryPostsProps>;
