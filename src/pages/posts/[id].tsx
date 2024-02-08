@@ -5,7 +5,11 @@ import { createClient as createUserClient } from '@/utils/supabase/client';
 import { createClient } from '@/utils/supabase/server';
 import { UserResponse } from '@supabase/supabase-js';
 import { format } from 'date-fns';
-import { GetServerSideProps } from 'next';
+import {
+    GetStaticPaths,
+    GetStaticProps,
+    InferGetServerSidePropsType,
+} from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -14,9 +18,20 @@ import { MdOutlineDeleteForever, MdOutlineModeEdit } from 'react-icons/md';
 
 const userSupabase = createUserClient();
 
+const supabase = createClient({});
+
+export const getStaticPaths = (async () => {
+    const { data } = await supabase.from('Post').select('id');
+
+    return {
+        paths: data?.map(({ id }) => ({ params: { id: id.toString() } })) ?? [],
+        fallback: 'blocking',
+    };
+}) satisfies GetStaticPaths;
+
 type PostProps = Post;
 
-export default function Post({
+export default function PostPage({
     id,
     title,
     category,
@@ -24,7 +39,7 @@ export default function Post({
     content,
     created_at,
     preview_image_url,
-}: PostProps) {
+}: InferGetServerSidePropsType<typeof getStaticProps>) {
     const [userResponse, setUserResponse] = useState<UserResponse>();
 
     useEffect(() => {
@@ -108,25 +123,25 @@ export default function Post({
     );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({
-    query,
-    req,
-}) => {
-    const { id } = query;
-
-    const supabase = createClient(req.cookies);
-
+export const getStaticProps = (async (context) => {
     const { data } = await supabase
         .from('Post')
         .select('*')
-        .eq('id', Number(id));
+        .eq('id', Number(context.params?.id));
 
     console.log(data);
     if (!data || !data[0]) {
         return { notFound: true };
     }
-    const { title, category, tags, content, created_at, preview_image_url } =
-        data[0];
+    const {
+        id,
+        title,
+        category,
+        tags,
+        content,
+        created_at,
+        preview_image_url,
+    } = data[0];
     return {
         props: {
             id,
@@ -138,4 +153,4 @@ export const getServerSideProps: GetServerSideProps = async ({
             preview_image_url,
         },
     };
-};
+}) satisfies GetStaticProps<Post>;
