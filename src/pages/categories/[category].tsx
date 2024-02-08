@@ -1,11 +1,10 @@
-import PostCard from '@/components/PostCard';
+import PostList from '@/components/PostList';
 import {
     GetServerSideProps,
     GetStaticPaths,
     GetStaticProps,
     InferGetStaticPropsType,
 } from 'next';
-import { useEffect, useState } from 'react';
 
 type PostType = {
     category: string;
@@ -38,44 +37,46 @@ export const getStaticProps = (async (context) => {
 export default function CategoryPosts({
     category,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-    const [data, setData] = useState([]);
+    return <PostList category={category} />;
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch(`/api/categories/${category}`);
-                const result = await response.json();
-                const postsArray =
-                    result.posts && Array.isArray(result.posts)
-                        ? result.posts
-                        : [];
-                setData(postsArray);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-        console.log(data);
-        fetchData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [category]);
+    // const [data, setData] = useState([]);
 
-    return (
-        <div className="flex flex-col items-center gap-8 pt-20">
-            <h1 className="text-2xl font-medium">[{category}]</h1>
-            <div className="container mx-auto grid grid-cols-2 gap-x-4 gap-y-6 px-4 pb-24 lg:gap-x-7 lg:gap-y-12">
-                {data.map((post: PostType) => (
-                    <PostCard key={post.id} {...post} />
-                ))}
-            </div>
-        </div>
-    );
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             const response = await fetch(`/api/categories/${category}`);
+    //             const result = await response.json();
+    //             const postsArray =
+    //                 result.posts && Array.isArray(result.posts)
+    //                     ? result.posts
+    //                     : [];
+    //             setData(postsArray);
+    //         } catch (error) {
+    //             console.error('Error fetching data:', error);
+    //         }
+    //     };
+    //     console.log(data);
+    //     fetchData();
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [category]);
+
+    // return (
+    //     <div className="flex flex-col items-center gap-8 pt-20">
+    //         <h1 className="text-2xl font-medium">[{category}]</h1>
+    //         <div className="container mx-auto grid grid-cols-2 gap-x-4 gap-y-6 px-4 pb-24 lg:gap-x-7 lg:gap-y-12">
+    //             {data.map((post: PostType) => (
+    //                 <PostCard key={post.id} {...post} />
+    //             ))}
+    //         </div>
+    //     </div>
+    // );
 }
-export const getServerSideProps: GetServerSideProps<
-    CategoryPostsProps
-> = async ({ query }) => {
-    return {
-        props: {
-            category: query.category as string,
-        },
-    };
-};
+// export const getServerSideProps: GetServerSideProps<
+//     CategoryPostsProps
+// > = async ({ query }) => {
+//     return {
+//         props: {
+//             category: query.category as string,
+//         },
+//     };
+// };
