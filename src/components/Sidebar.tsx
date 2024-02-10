@@ -22,7 +22,11 @@ const Sidebar: FC<SidebarProps> = ({ close, isOpen }) => {
             )}
         >
             <div className={'flex justify-end lg:hidden'}>
-                <IconButton Icon={AiOutlineClose} onClick={close} />
+                <IconButton
+                    Icon={AiOutlineClose}
+                    onClick={close}
+                    label="sidebarClose"
+                />
             </div>
             <Link
                 href={'/'}
@@ -49,6 +53,7 @@ const Sidebar: FC<SidebarProps> = ({ close, isOpen }) => {
                 <IconButton
                     Icon={AiFillGithub}
                     component={Link}
+                    label="githubLink"
                     href={'https://github.com/fluorjo'}
                     target="_blank"
                 />

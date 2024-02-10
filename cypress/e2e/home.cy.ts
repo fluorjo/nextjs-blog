@@ -1,5 +1,8 @@
 describe('homepage test', () => {
-  it('connection', () => {
+  beforeEach(() => {
     cy.visit('/')
   })
+  it('사이드바', () => {
+
+  });
 })

@@ -8,6 +8,8 @@ type IconButtonProps<Component extends ElementType> =
         iconClassname?: string;
         className?: string;
         component?: Component;
+        label: string;
+
     };
 
 const IconButton = <Component extends ElementType = 'button'>({
@@ -21,6 +23,7 @@ const IconButton = <Component extends ElementType = 'button'>({
         component ?? 'button',
         {
             className: cn('p-1.5 lg:p-2', className),
+            'data-cy': props.label,
             ...props,
         },
 

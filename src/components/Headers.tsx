@@ -14,6 +14,7 @@ const Header: FC<HeaderProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
             <IconButton
                 onClick={() => setIsSidebarOpen((t) => !t)}
                 Icon={isSidebarOpen ? AiOutlineClose : AiOutlineMenu}
+                label='sidebarToggle'
             />
 
             <Link href={'/'}>
@@ -22,7 +23,7 @@ const Header: FC<HeaderProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
                 </h1>
             </Link>
 
-            <IconButton Icon={BsRobot} component={Link} href="/search" />
+            <IconButton Icon={BsRobot} component={Link} label='chatbotLink' href="/search" />
         </header>
     );
 };

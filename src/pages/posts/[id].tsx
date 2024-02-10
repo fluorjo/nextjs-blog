@@ -95,11 +95,13 @@ export default function PostPage({
                         <IconButton
                             Icon={MdOutlineModeEdit}
                             component={Link}
+                            label='editPostLink'
                             href={`/posts/modify/${id}`}
                             className={`text-gray-500 hover:text-gray-600 `}
-                        />
+                            />
                         <IconButton
                             Icon={MdOutlineDeleteForever}
+                            label='deletePostLink'
                             onClick={deletePost}
                             className={'text-gray-500 hover:text-gray-600'}
                         />
