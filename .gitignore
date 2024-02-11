@@ -38,3 +38,6 @@ next-env.d.ts
 강의.md
 todo.md
 key.txt
+
+# cypress
+/cypress/e2e/write.cy.ts

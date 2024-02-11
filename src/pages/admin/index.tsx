@@ -41,7 +41,16 @@ export default function Admin() {
                     <Button type="button" onClick={() => router.push('/write')}>
                         글 쓰러 가기
                     </Button>
-
+                    <Button
+                        type="button"
+                        onClick={() => {
+                            fetch('/api/posts', {
+                                method: 'DELETE',
+                            });
+                        }}
+                    >
+                        테스트 글 삭제
+                    </Button>
                     <Button
                         type="button"
                         onClick={() => {

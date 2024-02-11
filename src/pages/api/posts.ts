@@ -2,23 +2,37 @@
 import { Post, postRequest } from '@/types';
 import { createClient } from '@/utils/supabase/server';
 import type { StorageError } from '@supabase/storage-js';
+import { PostgrestError } from '@supabase/supabase-js';
 import formidable from 'formidable';
 import { readFileSync } from 'fs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<Post | StorageError>,
+    res: NextApiResponse<Post | StorageError | PostgrestError>,
 ) {
-    if (req.method !== 'POST') return res.status(405).end();
-    
     const form = formidable();
     const [fields, files] = await form.parse(req);
 
     let preview_image_url: string | null = null;
 
-    const supabase = await createClient(req.cookies);   
+    const supabase = await createClient(req.cookies);
+
+    if (req.method === 'DELETE') {
+        const { error } = await supabase
+            .from('Post')
+            .delete()
+            .eq('category', 'Test');
+        if (error) {
+            res.status(403).json(error);
+        } else {
+            res.status(200).end();
+        }
+        return;
+    }
     
+    if (req.method !== 'POST') return res.status(405).end();
+
     if (files.preview_image?.length === 1) {
         const file = files.preview_image[0];
         const fileContent = await readFileSync(file.filepath);
