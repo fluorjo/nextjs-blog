@@ -17,7 +17,7 @@ export default async function handler(
     let preview_image_url: string | null = null;
 
     const supabase = await createClient(req.cookies);
-//
+
     if (req.method === 'DELETE') {
         const { error } = await supabase
             .from('Post')
