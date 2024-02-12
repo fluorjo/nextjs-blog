@@ -17,7 +17,7 @@ export default async function handler(
     let preview_image_url: string | null = null;
 
     const supabase = await createClient(req.cookies);
-
+//
     if (req.method === 'DELETE') {
         const { error } = await supabase
             .from('Post')
@@ -30,7 +30,7 @@ export default async function handler(
         }
         return;
     }
-    
+
     if (req.method !== 'POST') return res.status(405).end();
 
     if (files.preview_image?.length === 1) {
