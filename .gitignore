@@ -41,3 +41,6 @@ key.txt
 
 # cypress
 /cypress/e2e/write.cy.ts
+
+#github action
+/.github/*
