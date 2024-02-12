@@ -40,5 +40,3 @@ todo.md
 key.txt
 
 # cypress
-/cypress/e2e/write.cy.ts
-
