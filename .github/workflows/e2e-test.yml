@@ -16,5 +16,5 @@ jobs:
           start: yarn start
           wait-on: 'http://localhost:3000'
         env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{secrets.NEXT_PUBLIC_SUPABASE_URL}}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY}}
+          NEXT_PUBLIC_SUPABASE_URL: https://vyfkwfwikstziyoxdiap.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5Zmt3Zndpa3N0eml5b3hkaWFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDQ4MjM0ODAsImV4cCI6MjAyMDM5OTQ4MH0.HvomcvjWHuyrlw9Iiea7ZaYlgXbtoVrroP5W8VxmCOM
