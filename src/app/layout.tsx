@@ -6,13 +6,13 @@ import { cn } from '@/utils/style';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
 import { Inter } from 'next/font/google';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
 const queryClient = new QueryClient();
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({ children }: children:ReactNode) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     return (
         <QueryClientProvider client={queryClient}>
