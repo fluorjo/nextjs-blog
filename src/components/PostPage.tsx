@@ -2,36 +2,16 @@ import IconButton from '@/components/IconButton';
 import { MarkdownViewer } from '@/components/Markdown';
 import { Post } from '@/types';
 import { createClient as createUserClient } from '@/utils/supabase/client';
-import { createClient } from '@/utils/supabase/server';
+
 import { UserResponse } from '@supabase/supabase-js';
 import { format } from 'date-fns';
-import {
-    GetStaticPaths,
-    GetStaticProps,
-    InferGetServerSidePropsType,
-} from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { MdOutlineDeleteForever, MdOutlineModeEdit } from 'react-icons/md';
 
-const userSupabase = createUserClient();
-
-const supabase = createClient({});
-
-export const getStaticPaths = (async () => {
-    const { data } = await supabase.from('Post').select('id');
-
-    return {
-        paths: data?.map(({ id }) => ({ params: { id: id.toString() } })) ?? [],
-        fallback: 'blocking',
-    };
-}) satisfies GetStaticPaths;
-
-type PostProps = Post;
-
-export default function PostPage({
+const PostPage: FC<Post> = ({
     id,
     title,
     category,
@@ -39,7 +19,8 @@ export default function PostPage({
     content,
     created_at,
     preview_image_url,
-}: InferGetServerSidePropsType<typeof getStaticProps>) {
+}) => {
+    const userSupabase = createUserClient();
     const [userResponse, setUserResponse] = useState<UserResponse>();
 
     useEffect(() => {
@@ -47,7 +28,7 @@ export default function PostPage({
             const user = await userSupabase.auth.getUser();
             setUserResponse(user);
         })();
-    }, []);
+    }, [userSupabase.auth]);
     const router = useRouter();
 
     const deletePost = async () => {
@@ -95,13 +76,13 @@ export default function PostPage({
                         <IconButton
                             Icon={MdOutlineModeEdit}
                             component={Link}
-                            label='editPostLink'
+                            label="editPostLink"
                             href={`/posts/modify/${id}`}
                             className={`text-gray-500 hover:text-gray-600 `}
-                            />
+                        />
                         <IconButton
                             Icon={MdOutlineDeleteForever}
-                            label='deletePostLink'
+                            label="deletePostLink"
                             onClick={deletePost}
                             className={'text-gray-500 hover:text-gray-600'}
                         />
@@ -123,36 +104,6 @@ export default function PostPage({
             <MarkdownViewer source={content} className={' min-w-full'} />
         </div>
     );
-}
+};
 
-export const getStaticProps = (async (context) => {
-    const { data } = await supabase
-        .from('Post')
-        .select('*')
-        .eq('id', Number(context.params?.id));
-
-    console.log(data);
-    if (!data || !data[0]) {
-        return { notFound: true };
-    }
-    const {
-        id,
-        title,
-        category,
-        tags,
-        content,
-        created_at,
-        preview_image_url,
-    } = data[0];
-    return {
-        props: {
-            id,
-            title,
-            category,
-            tags: JSON.parse(tags) as string[],
-            content,
-            created_at,
-            preview_image_url,
-        },
-    };
-}) satisfies GetStaticProps<Post>;
+export default PostPage
