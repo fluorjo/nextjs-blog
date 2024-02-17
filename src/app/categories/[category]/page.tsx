@@ -1,7 +1,7 @@
 import PostList from '@/components/PostList';
 import { Post } from '@/types';
 import { createClient } from '@/utils/supabase/server';
-import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
+import { cookies } from 'next/headers';
 
 type PostType = {
     category: string;
@@ -16,40 +16,35 @@ type CategoryPostsProps = {
     category: string;
     posts: Post[];
 };
-const supabase = createClient({});
 
-export const getStaticPaths = (async () => {
+export const generateStaticParams = async () => {
+    const supabase = createClient(cookies());
     const { data } = await supabase.from('Post').select('category');
     const categories = Array.from(new Set(data?.map((d) => d.category)));
 
-    return {
-        paths: categories.map((category) => ({ params: { category } })),
-        fallback: 'blocking',
-    };
-}) satisfies GetStaticPaths;
+    return categories.map((category) => ({ category }));
+};
 
-export const getStaticProps = (async (context) => {
-    const category = context.params?.category as string;
+export default async function CategoryPosts({
+    params,
+}: {
+    params: { category: string };
+}) {
+    const category = params.category;
+    const supabase = createClient(cookies());
     const { data } = await supabase
         .from('Post')
         .select('*')
         .eq('category', category);
-    return {
-        props: {
-            category,
-            posts:
-                data?.map((post) => ({
-                    ...post,
-                    tags: JSON.parse(post.tags) as string[],
-                })) ?? [],
-        },
-    };
-}) satisfies GetStaticProps<CategoryPostsProps>;
-
-export default function CategoryPosts({
-    category,
-}: InferGetStaticPropsType<typeof getStaticProps>) {
-    return <PostList category={category} />;
+    return (
+        <PostList
+            category={category}
+            initialPosts={data?.map((post) => ({
+                ...post,
+                tags: JSON.parse(post.tags) as string[],
+            }))}
+        />
+    );
 
     // const [data, setData] = useState([]);
 
