@@ -3,22 +3,8 @@ import { Post } from '@/types';
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 
-type PostType = {
-    category: string;
-    content: string;
-    created_at: string;
-    id: number;
-    preview_image_url: string | null;
-    tags: string;
-    title: string;
-};
-type CategoryPostsProps = {
-    category: string;
-    posts: Post[];
-};
-
 export const generateStaticParams = async () => {
-    const supabase = createClient(cookies());
+    const supabase = createClient();
     const { data } = await supabase.from('Post').select('category');
     const categories = Array.from(new Set(data?.map((d) => d.category)));
 
@@ -38,7 +24,7 @@ export default async function CategoryPosts({
         .eq('category', category);
     return (
         <PostList
-            category={category}
+            category={decodeURIComponent(category)}
             initialPosts={data?.map((post) => ({
                 ...post,
                 tags: JSON.parse(post.tags) as string[],

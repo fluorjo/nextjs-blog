@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 const userSupabase = createUserClient();
 
 export const generateStaticParams = async () => {
-    const supabase = createClient(cookies());
+    const supabase = createClient();
     const { data } = await supabase.from('Post').select('id');
     
     return data?.map(({ id }) => ({ params: { id: id.toString() } })) ?? [];
