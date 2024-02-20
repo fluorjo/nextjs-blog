@@ -4,6 +4,7 @@ import type { StorageError } from '@supabase/storage-js';
 import formidable from 'formidable';
 import { readFileSync } from 'fs';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { cookies } from 'next/headers';
 
 export default async function handler(
     req: NextApiRequest,
@@ -22,7 +23,7 @@ export default async function handler(
 
     let preview_image_url: string | null = null;
 
-    const supabase = await createClient(req.cookies);
+    const supabase = await createClient(cookies());
 
     const postId = req.query.id; 
     const { data: existingData } = await supabase
