@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { Dispatch, FC, SetStateAction } from 'react';
 import { AiOutlineClose, AiOutlineMenu } from 'react-icons/ai';
-import { BsRobot } from 'react-icons/bs';
 import IconButton from './IconButton';
 import { useSidebar } from './Providers';
 
@@ -24,7 +23,6 @@ const Header: FC= () => {
                 </h1>
             </Link>
 
-            <IconButton Icon={BsRobot} component={Link} label='chatbotLink' href="/search" />
         </header>
     );
 };
